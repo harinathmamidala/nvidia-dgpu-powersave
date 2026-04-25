@@ -1,4 +1,4 @@
-# Maintainer: Your Name <your@email.com>
+# Maintainer: Harinath Mamidala
 pkgname=nvidia-dgpu-powersave
 pkgver=1.0.0
 pkgrel=1
