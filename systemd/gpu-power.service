@@ -1,0 +1,15 @@
+[Unit]
+Description=NVIDIA dGPU bind/unbind on AC power change
+After=systemd-udev-settle.service
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/gpu-power.sh
+User=root
+# Worst case: 5s kill grace + unbind + 15s D3cold poll + margin = ~45s
+TimeoutStartSec=90
+# Give the script time to finish cleanly on stop too
+TimeoutStopSec=30
+StandardOutput=journal
+StandardError=journal

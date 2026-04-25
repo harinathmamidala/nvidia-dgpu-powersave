@@ -1,0 +1,9 @@
+# /etc/udev/rules.d/99-gpu-power.rules
+#
+# Fire gpu-power.service whenever the AC adapter state changes.
+# ACTION=="change" covers plug and unplug events.
+# TAG+="systemd" + ENV{SYSTEMD_WANTS} starts a oneshot service from udev
+# without blocking udev event processing.
+
+SUBSYSTEM=="power_supply", ATTR{type}=="Mains", ACTION=="change", \
+    TAG+="systemd", ENV{SYSTEMD_WANTS}="gpu-power.service"

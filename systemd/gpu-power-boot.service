@@ -1,0 +1,15 @@
+[Unit]
+Description=NVIDIA dGPU bind/unbind on boot based on power source
+After=systemd-udev-settle.service multi-user.target
+DefaultDependencies=no
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/gpu-power.sh
+User=root
+TimeoutStartSec=60
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

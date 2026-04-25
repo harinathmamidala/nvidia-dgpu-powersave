@@ -1,0 +1,33 @@
+post_install() {
+    echo "==> Enabling gpu-power-boot.service (runs on every boot)..."
+    systemctl enable gpu-power-boot.service
+
+    echo "==> Reloading udev rules..."
+    udevadm control --reload-rules
+    udevadm trigger --subsystem-match=power_supply
+
+    echo ""
+    echo "==> nvidia-dgpu-powersave installed successfully."
+    echo "    The dGPU will now be:"
+    echo "      • Unbound automatically when you unplug AC power"
+    echo "      • Rebound automatically when you plug AC power back in"
+    echo "      • Set to the correct state on every boot"
+    echo ""
+    echo "    To verify, plug/unplug AC and check:"
+    echo "      journalctl -t gpu-power -n 30"
+}
+
+post_upgrade() {
+    post_install
+}
+
+pre_remove() {
+    echo "==> Disabling gpu-power-boot.service..."
+    systemctl disable gpu-power-boot.service 2>/dev/null || true
+
+    echo "==> Stopping any running gpu-power instance..."
+    systemctl stop gpu-power.service 2>/dev/null || true
+
+    echo "==> Reloading udev rules..."
+    udevadm control --reload-rules
+}

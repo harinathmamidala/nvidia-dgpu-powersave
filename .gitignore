@@ -1,0 +1,10 @@
+# makepkg artifacts
+packaging/*.pkg.tar.*
+packaging/pkg/
+packaging/src/
+packaging/*.log
+
+# Editor
+.vscode/
+*.swp
+*~
