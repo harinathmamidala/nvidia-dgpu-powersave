@@ -98,19 +98,9 @@ systemctl --version
 
 ## Installation
 
-### Option A — AUR (recommended for Arch users)
-
-```bash
-# Using yay
-yay -S nvidia-dgpu-powersave
-
-# Using paru
-paru -S nvidia-dgpu-powersave
-```
-
 The package will automatically enable `gpu-power-boot.service` and reload udev rules.
 
-### Option B — Manual (any systemd-based distro)
+### Option A — Manual (any systemd-based distro)
 
 ```bash
 git clone https://github.com/YOURUSERNAME/nvidia-dgpu-powersave.git
@@ -118,7 +108,7 @@ cd nvidia-dgpu-powersave
 sudo bash install.sh
 ```
 
-### Option C — Build from PKGBUILD
+### Option B — Build from PKGBUILD
 
 ```bash
 git clone https://github.com/YOURUSERNAME/nvidia-dgpu-powersave.git
@@ -131,9 +121,6 @@ makepkg -si
 ## Uninstallation
 
 ```bash
-# If installed via AUR/pacman
-sudo pacman -R nvidia-dgpu-powersave
-
 # If installed manually
 sudo bash uninstall.sh
 ```
