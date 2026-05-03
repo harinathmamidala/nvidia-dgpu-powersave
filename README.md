@@ -200,6 +200,63 @@ On certain laptop models, HDMI and DisplayPort outputs are wired through the dGP
 **Wayland compositors may behave differently**
 Some Wayland compositors keep a DRM file descriptor open to the GPU. If `gpu-power.sh` logs a warning that it could not kill all GPU processes, the compositor is the likely culprit. Stopping it before unplug (or configuring it to release the GPU) will resolve this.
 
+⚙️ Step 1: Hide NVIDIA Globally
+
+Linux uses JSON files to advertise available GPU drivers. We override this behavior using environment variables.
+
+Edit /etc/environment
+
+Requires root privileges
+
+sudo nano /etc/environment
+
+Add the following lines:
+
+# Force Vulkan to only use the Intel driver
+VK_DRIVER_FILES=/usr/share/vulkan/icd.d/intel_icd.x86_64.json
+
+# Force EGL (OpenGL) to only use the Mesa (Intel) driver
+__EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/50_mesa.json
+⚠️ Important
+
+Make sure these files exist on your system:
+
+/usr/share/vulkan/icd.d/intel_icd.x86_64.json
+/usr/share/glvnd/egl_vendor.d/50_mesa.json
+
+If you're using standard open-source Intel (Mesa) drivers on Arch, these paths should already be correct.
+
+🔄 Reboot
+sudo reboot
+
+After reboot:
+
+Applications like Chrome, Discord, etc. will only see the Intel GPU
+NVIDIA GPU will remain idle unless explicitly used
+🚀 Step 2: Update prime-run
+
+Since NVIDIA is now hidden globally, we need to override those settings when we do want to use it.
+
+Edit the prime-run script
+sudo nano /usr/bin/prime-run
+
+Replace or update it to:
+
+#!/bin/bash
+
+export __NV_PRIME_RENDER_OFFLOAD=1
+export __VK_LAYER_NV_optimus=NVIDIA_only
+export __GLX_VENDOR_LIBRARY_NAME=nvidia
+
+# Override global Intel-only settings
+export VK_DRIVER_FILES=/usr/share/vulkan/icd.d/nvidia_icd.json
+export __EGL_VENDOR_LIBRARY_FILENAMES=/usr/share/glvnd/egl_vendor.d/10_nvidia.json
+
+exec "$@"
+Make sure it's executable
+sudo chmod +x /usr/bin/prime-run
+
+
 **BIOS/ACPI variations**
 D3cold depends on your laptop's ACPI firmware cutting the power rail after the driver releases the device. On some machines this does not happen automatically. The script will log a note if D3cold is not confirmed — the GPU will still be unbound and drawing less power, but the full power rail cutoff may not occur.
 
